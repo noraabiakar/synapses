@@ -106,10 +106,7 @@ static void init(arb_mechanism_ppack* pp) {
         _pp_var_Trelease[i_] =  0.;
         _pp_var_Mres[i_] =  1.6605778811026237e-06*_pp_var_M[i_];
         _pp_var_numpulses[i_] =  0.;
-        _pp_var_xview[i_] =  1.0;
-        _pp_var_yview[i_] =  0.;
         _pp_var_zview[i_] =  0.;
-        _pp_var_Pview[i_] =  0.;
         _pp_var_on[i_] =  0.;
         _pp_var_y[i_] =  0.;
         _pp_var_z[i_] =  0.;
@@ -131,31 +128,41 @@ static void advance_state(arb_mechanism_ppack* pp) {
     for (arb_size_type i_ = 0; i_ < _pp_var_width; ++i_) {
         auto node_indexi_ = _pp_var_node_index[i_];
         arb_value_type dt = _pp_var_vec_dt[node_indexi_];
-        arb_value_type t_8_, t_7_, t_6_, t_5_, a_0_, a_3_, a_7_, t_1_, a_1_, a_4_, b_0_, t_2_, a_2_, a_5_, t_4_, a_6_, t_0_, t_3_;
-        _pp_var_r1[i_] = _pp_var_r1FIX[i_]*pow(_pp_var_Trelease[i_],  2.0)/pow(_pp_var_Trelease[i_]+_pp_var_kB[i_],  2.0);
-        _pp_var_r6[i_] = _pp_var_r6FIX[i_]*pow(_pp_var_Trelease[i_],  2.0)/pow(_pp_var_Trelease[i_]+_pp_var_kB[i_],  2.0);
-        a_0_ =  1.0;
-        a_1_ =  1.0;
-        a_2_ =  1.0;
-        a_3_ =  1.0;
-        a_4_ =  -( -1.0* -_pp_var_r6[i_]*dt);
-        a_5_ =  1.0- -1.0*_pp_var_r5[i_]*dt;
-        a_6_ =  -(_pp_var_r1[i_]*dt);
-        a_7_ =  1.0- -_pp_var_r2[i_]*dt;
-        t_0_ = a_7_*a_0_-a_2_*a_6_;
-        t_1_ = a_7_*a_1_;
-        t_2_ = a_7_*a_3_-a_2_*_pp_var_O[i_];
-        t_3_ = a_5_*t_0_-t_1_*a_4_;
-        t_4_ = a_5_*t_2_-t_1_*_pp_var_D[i_];
-        t_5_ = t_3_*a_5_;
-        t_6_ = t_3_*_pp_var_D[i_]-a_4_*t_4_;
-        t_7_ = t_3_*a_7_;
-        t_8_ = t_3_*_pp_var_O[i_]-a_6_*t_4_;
-        _pp_var_C[i_] = t_4_/t_3_;
-        _pp_var_D[i_] = t_6_/t_5_;
-        _pp_var_O[i_] = t_8_/t_7_;
-        b_0_ =  -1.0;
-        _pp_var_delay[i_] = _pp_var_delay[i_]+b_0_*dt;
+
+        {
+            // Read 
+            auto O  = _pp_var_O[i_];
+            auto D  = _pp_var_D[i_];
+            auto r2 = _pp_var_r2[i_];
+            auto r5 = _pp_var_r5[i_];
+
+            auto tr = _pp_var_Trelease[i_];
+            auto k  = _pp_var_kB[i_];
+            auto ratio = (tr^2)/(tr+kb)^2
+
+            auto r1 = _pp_var_r1FIX[i_] * trsq / trkbsq;
+            auto r6 = _pp_var_r6FIX[i_] * trsq / trkbsq;
+
+            // Solve ODEs 
+            auto t0  =  -r6 * dt;
+            auto t1  =  -r1 * dt;
+            auto t2  =  1.0 + r5*dt;
+            auto t3  =  1.0 + r2*dt;
+            auto t4  = -t3 * t1;
+            auto t5  = t3 - O;
+            auto t6  = (t2 * t4) - (t3 * t0);
+            auto t7  = (t2 * t5) - (t3 * D);
+            auto t8  = t6 * t2;
+            auto t9  = (t6 * D) - (t0 * t7);
+            auto t10 = t6 * t3;
+            auto t11 = (t6 * O) - (t1 * t7);
+
+            // Update 
+            _pp_var_C[i_] = t7 / t6;
+            _pp_var_D[i_] = t9 / t8;
+            _pp_var_O[i_] = t11 / t10;
+            _pp_var_delay[i_] -= dt;
+        }
     }
 }
 
@@ -164,91 +171,125 @@ static void compute_currents(arb_mechanism_ppack* pp) {
     for (arb_size_type i_ = 0; i_ < _pp_var_width; ++i_) {
         auto node_indexi_ = _pp_var_node_index[i_];
         auto vec_dii_ = _pp_var_vec_di[node_indexi_];
-        arb_value_type conductivity_ = 0;
-        arb_value_type current_ = 0;
+
         arb_value_type t = _pp_var_vec_t[vec_dii_];
         arb_value_type v = _pp_var_vec_v[node_indexi_];
-        arb_value_type i = 0;
-        // START EDIT
-        arb_value_type NTdiffWave = 0.0; 
-        {
-            auto mres = _pp_var_Mres[i_];
-            auto r = _pp_var_R[i_];
-            auto diff = _pp_var_Diff[i_];
-            auto lamd = _pp_var_lamd[i_];
 
-            auto max_pulses = std::min(_pp_var_numpulses[i_], 50); 
-	    for (unsigned pulse = 0; pulse < max_pulses; ++pulse) {
-                // get offset into array
-                auto offset = pulse*_pp_var_width
-                auto ts = _pp_var_tspike[offset+i_]; 
-                auto pre = _pp_var_PRE[offset+i_]; 
-                if (t>ts) {
-                    NTdiffWave += pre*mres*std::exp(-r*r/(4*diff*(t-ts)))/(4*3.14159*diff*((1e-3)*lamd)*(t-ts))
-                }
+        // START EDIT
+        // Read
+        const auto mres = _pp_var_Mres[i_];
+        const auto r = _pp_var_R[i_];
+        const auto diff = _pp_var_Diff[i_];
+        const auto lamd = _pp_var_lamd[i_];
+        const auto numpulses = _pp_var_numpulses[i_];
+
+        // Calculate
+        const auto rsq = r*r;  
+        const auto diff_4 = diff*4;
+        const auto lamd_scaled = (1e-3)*lamd;
+
+        auto NTdiffWave = _pp_var_T[i_];
+        const auto max_pulses = std::min(numpulses, 50); 
+	for (unsigned pulse = 0; pulse < max_pulses; ++pulse) {
+            auto offset = pulse*_pp_var_width + i_;
+            auto ts     = _pp_var_tspike[offset]; 
+
+            auto delta_t = t - ts; 
+            if (delta_t > 0.) {
+                auto pre = _pp_var_PRE[offset]; 
+                auto invariant = delta_t*diff_4; 
+                NTdiffWave += pre*mres*std::exp(-rsq/invariant)/(3.14159*invariant*lamd_scaled)
             }
         }
-        _pp_var_Trelease[i_] = _pp_var_T[i_] + NTdiffWave;
+
+        // Update
+        _pp_var_Trelease[i_] = NTdiffWave;
         // END EDIT
-        _pp_var_g[i_] = _pp_var_gmax[i_]*_pp_var_O[i_];
-        i =  9.9999999999999995e-07*_pp_var_g[i_]*(v-_pp_var_Erev[i_]);
+
+        // Reset 
         if (_pp_var_delay[i_]== 0.) {
-            _pp_var_t0[i_] = t;
             _pp_var_T[i_] =  0.;
             _pp_var_on[i_] =  0.;
         }
-        current_ = i;
-        conductivity_ =  9.9999999999999995e-07*_pp_var_g[i_];
-        _pp_var_vec_g[node_indexi_] = fma(_pp_var_weight[i_], conductivity_, _pp_var_vec_g[node_indexi_]);
-        _pp_var_vec_i[node_indexi_] = fma(_pp_var_weight[i_], current_, _pp_var_vec_i[node_indexi_]);
+
+        // Update
+        const auto gmax = _pp_var_gmax[i_];
+        const auto O    = _pp_var_O[i_];
+        const auto Erev = _pp_var_Erev[i_];
+        const auto weight = _pp_var_weight[i_];
+
+        auto conductivity_ =  1e-06*gmax*O;
+        auto current       =  conductivity_*(v-Erev);
+        _pp_var_vec_g[node_indexi_] = fma(weight, conductivity_, _pp_var_vec_g[node_indexi_]);
+        _pp_var_vec_i[node_indexi_] = fma(weight, current,       _pp_var_vec_i[node_indexi_]);
     }
 }
 
-static void write_ions(arb_mechanism_ppack* pp) {
-}
+static void write_ions(arb_mechanism_ppack* pp) {}
 
 static void apply_events(arb_mechanism_ppack* pp, arb_deliverable_event_stream* stream_ptr) {
     PPACK_IFACE_BLOCK;
     auto ncell = stream_ptr->n_streams;
     for (arb_size_type c = 0; c<ncell; ++c) {
+
         auto begin  = stream_ptr->events + stream_ptr->begin[c];
         auto end    = stream_ptr->events + stream_ptr->end[c];
+
         for (auto p = begin; p<end; ++p) {
             auto i_     = p->mech_index;
             auto weight = p->weight;
-            if (p->mech_id==_pp_var_mechanism_id) {
+
+            if (p->mech_id == _pp_var_mechanism_id) {
                 auto node_indexi_ = _pp_var_node_index[i_]; // EDITTED - This line was missing.
                 auto vec_dii_ = _pp_var_vec_di[node_indexi_];
+
                 arb_value_type t = _pp_var_vec_t[vec_dii_];
-                _pp_var_nspike[i_] = _pp_var_nspike[i_]+ 1.0;
-                if (_pp_var_on[i_]!= 1.0) {
-                    _pp_var_t0[i_] = t;
+                if (!_pp_var_on[i_]) {
                     _pp_var_on[i_] =  1.0;
-                    _pp_var_z[i_] = _pp_var_z[i_]*exp( -(t-_pp_var_tsyn[i_])/_pp_var_tau_rec[i_]);
-                    _pp_var_z[i_] = _pp_var_z[i_]+_pp_var_y[i_]*(exp( -(t-_pp_var_tsyn[i_])/_pp_var_tau_1[i_])-exp( -(t-_pp_var_tsyn[i_])/_pp_var_tau_rec[i_]))/(_pp_var_tau_1[i_]/_pp_var_tau_rec[i_]- 1.0);
-                    _pp_var_y[i_] = _pp_var_y[i_]*exp( -(t-_pp_var_tsyn[i_])/_pp_var_tau_1[i_]);
-                    _pp_var_x[i_] =  1.0-_pp_var_y[i_]-_pp_var_z[i_];
-                    if (_pp_var_tau_facil[i_]> 0.) {
-                        _pp_var_u[i_] = _pp_var_u[i_]*exp( -(t-_pp_var_tsyn[i_])/_pp_var_tau_facil[i_]);
-                        _pp_var_u[i_] = _pp_var_u[i_]+_pp_var_U[i_]*( 1.0-_pp_var_u[i_]);
+
+                    // Read
+                    auto z = _pp_var_z[i_];
+                    auto y = _pp_var_y[i_];
+                    auto x = _pp_var_x[i_];
+                    auto u = _pp_var_u[i_];
+
+                    const auto tsyn      = _pp_var_tsyn[i_];
+                    const auto tau_rec   = _pp_var_tau_rec[i_];
+                    const auto tau_1     = _pp_var_tau_1[i_];
+                    const auto tau_facil = _pp_var_tau_facil[i_];
+                    const auto U         = _pp_var_U[i_];
+                    const auto Tmax      = _pp_var_Tmax[i_];
+                    const auto numpulses = _pp_var_numpulses[i_];
+
+                    // Modify
+                    z = z*exp(-(t-tsyn)/tau_rec);
+                    z = z+y*(exp(-(t-tsyn)/tau_1) - exp(-(t-tsyn)/tau_rec)) / (tau_1/tau_rec - 1.0);
+                    y = y*exp(-(t-tsyn)/tau_1);
+                    x =  1.0-y-z;
+
+                    if (tau_facil> 0.) {
+                        u = u*exp(-(t-tsyn)/tau_facil);
+                        u = u + U*(1.0-u);
                     }
                     else {
-                        _pp_var_u[i_] = _pp_var_U[i_];
+                        u = U;
                     }
-                    _pp_var_y[i_] = _pp_var_y[i_]+_pp_var_x[i_]*_pp_var_u[i_];
-                    _pp_var_xview[i_] = _pp_var_x[i_];
-                    _pp_var_yview[i_] = _pp_var_y[i_];
-                    _pp_var_Pview[i_] = _pp_var_u[i_];
-                    _pp_var_T[i_] = _pp_var_Tmax[i_]*_pp_var_y[i_];
+                    y = y + x * u;
+
+                    // Update
+                    _pp_var_T[i_] = Tmax*y;
+                    _pp_var_z[i_] = z;
+                    _pp_var_y[i_] = y;
+                    _pp_var_x[i_] = x;
+                    _pp_var_u[i_] = u;
+
                     // START EDIT
-                    auto numpulse = _pp_var_numpulses[i_]%50;
-                    // get offset into array
-                    auto offset = numpulse*_pp_var_width
-                    // update 
+                    auto offset = (numpulses%50)*_pp_var_width; // rolling window update
                     _pp_var_tspike[offset+i_] = t; 
-                    _pp_var_PRE[offset+i_] = _pp_var_y[i_]; 
+                    _pp_var_PRE[offset+i_]    = y; 
                     // END EDIT
-                    _pp_var_numpulses[i_] = _pp_var_numpulses[i_]+ 1.0;
+
+                    _pp_var_numpulses[i_] = numpulses + 1.;
                     _pp_var_tsyn[i_] = t;
                 }
                 _pp_var_delay[i_] = _pp_var_Cdur[i_];
