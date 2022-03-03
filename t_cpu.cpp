@@ -41,7 +41,9 @@ static constexpr unsigned min_align_ = std::max(alignof(arb_value_type), alignof
 [[maybe_unused]] auto& _pp_var_events            = pp->events;\
 [[maybe_unused]] auto& _pp_var_mechanism_id      = pp->mechanism_id;\
 [[maybe_unused]] auto& _pp_var_index_constraints = pp->index_constraints;\
+\
 [[maybe_unused]] auto _pp_var_u0 = pp->globals[0];\
+\
 [[maybe_unused]] auto* _pp_var_C = pp->state_vars[0];\
 [[maybe_unused]] auto* _pp_var_O = pp->state_vars[1];\
 [[maybe_unused]] auto* _pp_var_D = pp->state_vars[2];\
@@ -68,6 +70,9 @@ static constexpr unsigned min_align_ = std::max(alignof(arb_value_type), alignof
 [[maybe_unused]] auto* _pp_var_z = pp->state_vars[23];\
 [[maybe_unused]] auto* _pp_var_u = pp->state_vars[24];\
 [[maybe_unused]] auto* _pp_var_tsyn = pp->state_vars[25];\
+[[maybe_unused]] auto* _pp_var_tspike = pp->state_vars[26];\
+[[maybe_unused]] auto* _pp_var_PRE    = pp->state_vars[76];\
+\
 [[maybe_unused]] auto* _pp_var_gmax = pp->parameters[0];\
 [[maybe_unused]] auto* _pp_var_Cdur = pp->parameters[1];\
 [[maybe_unused]] auto* _pp_var_Erev = pp->parameters[2];\
@@ -93,8 +98,6 @@ static constexpr unsigned min_align_ = std::max(alignof(arb_value_type), alignof
 static void init(arb_mechanism_ppack* pp) {
     PPACK_IFACE_BLOCK;
     for (arb_size_type i_ = 0; i_ < _pp_var_width; ++i_) {
-        auto vec_dii_ = _pp_var_vec_di[node_indexi_];
-        arb_value_type t = _pp_var_vec_t[vec_dii_];
         _pp_var_C[i_] =  1.0;
         _pp_var_O[i_] =  0.;
         _pp_var_D[i_] =  0.;
@@ -113,6 +116,7 @@ static void init(arb_mechanism_ppack* pp) {
         _pp_var_u[i_] = _pp_var_u0;
         _pp_var_tsyn[i_] = t;
         _pp_var_nspike[i_] =  1.0;
+        _pp_var_tspike[i_] =  1e12; // EDITTED
     }
     if (!_pp_var_multiplicity) return;
     for (arb_size_type ix = 0; ix < 4; ++ix) {
@@ -165,6 +169,27 @@ static void compute_currents(arb_mechanism_ppack* pp) {
         arb_value_type t = _pp_var_vec_t[vec_dii_];
         arb_value_type v = _pp_var_vec_v[node_indexi_];
         arb_value_type i = 0;
+        // START EDIT
+        arb_value_type NTdiffWave = 0.0; 
+        {
+            auto mres = _pp_var_Mres[i_];
+            auto r = _pp_var_R[i_];
+            auto diff = _pp_var_Diff[i_];
+            auto lamd = _pp_var_lamd[i_];
+
+            auto max_pulses = std::min(_pp_var_numpulses[i_], 50); 
+	    for (unsigned pulse = 0; pulse < max_pulses; ++pulse) {
+                // get offset into array
+                auto offset = pulse*_pp_var_width
+                auto ts = _pp_var_tspike[offset+i_]; 
+                auto pre = _pp_var_PRE[offset+i_]; 
+                if (t>ts) {
+                    NTdiffWave += pre*mres*std::exp(-r*r/(4*diff*(t-ts)))/(4*3.14159*diff*((1e-3)*lamd)*(t-ts))
+                }
+            }
+        }
+        _pp_var_Trelease[i_] = _pp_var_T[i_] + NTdiffWave;
+        // END EDIT
         _pp_var_g[i_] = _pp_var_gmax[i_]*_pp_var_O[i_];
         i =  9.9999999999999995e-07*_pp_var_g[i_]*(v-_pp_var_Erev[i_]);
         if (_pp_var_delay[i_]== 0.) {
@@ -192,6 +217,7 @@ static void apply_events(arb_mechanism_ppack* pp, arb_deliverable_event_stream* 
             auto i_     = p->mech_index;
             auto weight = p->weight;
             if (p->mech_id==_pp_var_mechanism_id) {
+                auto node_indexi_ = _pp_var_node_index[i_]; // EDITTED - This line was missing.
                 auto vec_dii_ = _pp_var_vec_di[node_indexi_];
                 arb_value_type t = _pp_var_vec_t[vec_dii_];
                 _pp_var_nspike[i_] = _pp_var_nspike[i_]+ 1.0;
@@ -214,6 +240,14 @@ static void apply_events(arb_mechanism_ppack* pp, arb_deliverable_event_stream* 
                     _pp_var_yview[i_] = _pp_var_y[i_];
                     _pp_var_Pview[i_] = _pp_var_u[i_];
                     _pp_var_T[i_] = _pp_var_Tmax[i_]*_pp_var_y[i_];
+                    // START EDIT
+                    auto numpulse = _pp_var_numpulses[i_]%50;
+                    // get offset into array
+                    auto offset = numpulse*_pp_var_width
+                    // update 
+                    _pp_var_tspike[offset+i_] = t; 
+                    _pp_var_PRE[offset+i_] = _pp_var_y[i_]; 
+                    // END EDIT
                     _pp_var_numpulses[i_] = _pp_var_numpulses[i_]+ 1.0;
                     _pp_var_tsyn[i_] = t;
                 }
