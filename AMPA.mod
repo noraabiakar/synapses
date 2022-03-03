@@ -12,7 +12,7 @@ NEURON {
     RANGE tau_1, tau_rec, tau_facil, U     
     RANGE T, Tmax, Trelease        
     RANGE M, Diff, R, lamd
-    RANGE tspike, PRE 
+    :RANGE tspike, PRE 
     RANGE NTdiffusion     
     RANGE xview,yview,zview,Pview
 }
@@ -25,7 +25,10 @@ UNITS {
     (pS)     = (picosiemens)
     (nS)     = (nanosiemens)
     (um)     = (micrometer)
-    PI       = (pi)        (1)
+}
+
+CONSTANT {
+    PI = 3.14159
 }
 
 PARAMETER {
@@ -54,12 +57,12 @@ PARAMETER {
     R             = 1.033 (um)
     Diff          = 0.223 (um2/ms)
     lamd          = 20    (nm)
+    t
 }
 
 
 ASSIGNED {
     v         (mV)         
-    i         (nA)         
     g         (pS)         
     T         (mM)
     
@@ -67,10 +70,10 @@ ASSIGNED {
     r6        (/ms)
 
     Trelease    (mM)
-    tspike[50]  (ms)
+    :tspike[50]  (ms)
     x 
     tsyn        (ms)
-    PRE[50]
+    :PRE[50]
     
     Mres        (mM)    
     NTdiffusion (mM)
@@ -103,9 +106,9 @@ INITIAL {
     D = 0
     delay = 0
     
-    T = 0 (mM)
-    Trelease = 0 (mM)
-    tspike[0] = 1e12    (ms)
+    T = 0
+    Trelease = 0
+    :tspike[0] = 1e12
 
     Mres = (1e3 * 1e15 / 6.022e23 * M)   : (M) to (mM) so 1e3, 1um^3=1dm^3*1e-15 so 1e15   
     numpulses = 0
@@ -123,20 +126,18 @@ INITIAL {
     nspike = 1
 }
 
-COMMENT
-FUNCTION NTdiffWave(){
-    LOCAL ijk,ts
-    : sums up diffusion contributes
-    NTdiffusion=0
-    FROM ijk=1 TO numpulses{
-        ts=tspike[ijk-1]
-        if(t>ts){        
-            NTdiffusion=NTdiffusion+PRE[ijk-1]*Mres*exp(-R*R/(4*Diff*(t-ts)))/(4*PI*Diff*((1e-3)*lamd)*(t-ts))    
-        }
-    }                    
-    NTdiffWave=NTdiffusion
-}
-END_COMMENT
+:FUNCTION NTdiffWave(){
+:    LOCAL ijk,ts
+:    : sums up diffusion contributes
+:    NTdiffusion=0
+:    FROM ijk=1 TO numpulses{
+:        ts=tspike[ijk-1]
+:        if(t>ts){        
+:            NTdiffusion=NTdiffusion+PRE[ijk-1]*Mres*exp(-R*R/(4*Diff*(t-ts)))/(4*PI*Diff*((1e-3)*lamd)*(t-ts))    
+:        }
+:    }                    
+:    NTdiffWave=NTdiffusion
+:}
 
 BREAKPOINT {    
     SOLVE kstates METHOD sparse
@@ -168,7 +169,7 @@ DERIVATIVE sdelay {
 NET_RECEIVE(weight) {
     : presynaptic modulation
     nspike = nspike + 1
-    if (!on) {
+    if (on != 1) {
         t0 = t
         on = 1        
               
@@ -191,8 +192,8 @@ NET_RECEIVE(weight) {
         Pview = u
 
         T = Tmax * y            
-        PRE[numpulses] = y     
-        tspike[numpulses] = t
+        :PRE[numpulses] = y     
+        :tspike[numpulses] = t
         numpulses = numpulses + 1
         tsyn = t
     }
