@@ -98,6 +98,9 @@ static constexpr unsigned min_align_ = std::max(alignof(arb_value_type), alignof
 static void init(arb_mechanism_ppack* pp) {
     PPACK_IFACE_BLOCK;
     for (arb_size_type i_ = 0; i_ < _pp_var_width; ++i_) {
+        auto node_indexi_ = _pp_var_node_index[i_];
+        auto vec_dii_     = _pp_var_vec_di[node_indexi_];
+        auto t            = _pp_var_vec_t[vec_dii_];
         _pp_var_C[i_] =  1.0;
         _pp_var_O[i_] =  0.;
         _pp_var_D[i_] =  0.;
@@ -112,7 +115,6 @@ static void init(arb_mechanism_ppack* pp) {
         _pp_var_z[i_] =  0.;
         _pp_var_u[i_] = _pp_var_u0;
         _pp_var_tsyn[i_] = t;
-        _pp_var_nspike[i_] =  1.0;
         _pp_var_tspike[i_] =  1e12; // EDITTED
     }
     if (!_pp_var_multiplicity) return;
@@ -128,41 +130,39 @@ static void advance_state(arb_mechanism_ppack* pp) {
     for (arb_size_type i_ = 0; i_ < _pp_var_width; ++i_) {
         auto node_indexi_ = _pp_var_node_index[i_];
         arb_value_type dt = _pp_var_vec_dt[node_indexi_];
+        
+        // Read 
+        auto O  = _pp_var_O[i_];
+        auto D  = _pp_var_D[i_];
+        auto r2 = _pp_var_r2[i_];
+        auto r5 = _pp_var_r5[i_];
 
-        {
-            // Read 
-            auto O  = _pp_var_O[i_];
-            auto D  = _pp_var_D[i_];
-            auto r2 = _pp_var_r2[i_];
-            auto r5 = _pp_var_r5[i_];
+        auto tr = _pp_var_Trelease[i_];
+        auto k  = _pp_var_kB[i_];
+        auto ratio = (tr^2)/(tr+kb)^2
 
-            auto tr = _pp_var_Trelease[i_];
-            auto k  = _pp_var_kB[i_];
-            auto ratio = (tr^2)/(tr+kb)^2
+        auto r1 = _pp_var_r1FIX[i_] * trsq / trkbsq;
+        auto r6 = _pp_var_r6FIX[i_] * trsq / trkbsq;
 
-            auto r1 = _pp_var_r1FIX[i_] * trsq / trkbsq;
-            auto r6 = _pp_var_r6FIX[i_] * trsq / trkbsq;
+        // Solve ODEs 
+        auto t0  =  -r6 * dt;
+        auto t1  =  -r1 * dt;
+        auto t2  =  1.0 + r5*dt;
+        auto t3  =  1.0 + r2*dt;
+        auto t4  = -t3 * t1;
+        auto t5  = t3 - O;
+        auto t6  = (t2 * t4) - (t3 * t0);
+        auto t7  = (t2 * t5) - (t3 * D);
+        auto t8  = t6 * t2;
+        auto t9  = (t6 * D) - (t0 * t7);
+        auto t10 = t6 * t3;
+        auto t11 = (t6 * O) - (t1 * t7);
 
-            // Solve ODEs 
-            auto t0  =  -r6 * dt;
-            auto t1  =  -r1 * dt;
-            auto t2  =  1.0 + r5*dt;
-            auto t3  =  1.0 + r2*dt;
-            auto t4  = -t3 * t1;
-            auto t5  = t3 - O;
-            auto t6  = (t2 * t4) - (t3 * t0);
-            auto t7  = (t2 * t5) - (t3 * D);
-            auto t8  = t6 * t2;
-            auto t9  = (t6 * D) - (t0 * t7);
-            auto t10 = t6 * t3;
-            auto t11 = (t6 * O) - (t1 * t7);
-
-            // Update 
-            _pp_var_C[i_] = t7 / t6;
-            _pp_var_D[i_] = t9 / t8;
-            _pp_var_O[i_] = t11 / t10;
-            _pp_var_delay[i_] -= dt;
-        }
+        // Update 
+        _pp_var_C[i_] = t7 / t6;
+        _pp_var_D[i_] = t9 / t8;
+        _pp_var_O[i_] = t11 / t10;
+        _pp_var_delay[i_] -= dt;
     }
 }
 
