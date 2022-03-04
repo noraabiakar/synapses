@@ -69,8 +69,6 @@ static constexpr unsigned min_align_ = std::max(alignof(arb_value_type), alignof
 [[maybe_unused]] auto* _pp_var_y = pp->state_vars[22];\
 [[maybe_unused]] auto* _pp_var_z = pp->state_vars[23];\
 [[maybe_unused]] auto* _pp_var_u = pp->state_vars[24];\
-[[maybe_unused]] auto* _pp_var_tspike = pp->state_vars[25];\
-[[maybe_unused]] auto* _pp_var_PRE    = pp->state_vars[75];\
 \
 [[maybe_unused]] auto* _pp_var_gmax = pp->parameters[0];\
 [[maybe_unused]] auto* _pp_var_Cdur = pp->parameters[1];\
@@ -89,6 +87,32 @@ static constexpr unsigned min_align_ = std::max(alignof(arb_value_type), alignof
 [[maybe_unused]] auto* _pp_var_R = pp->parameters[14];\
 [[maybe_unused]] auto* _pp_var_Diff = pp->parameters[15];\
 [[maybe_unused]] auto* _pp_var_lamd = pp->parameters[16];\
+\
+[[maybe_unused]] arb_value_type* _pp_var_tspike[50] = {\
+    pp->state_vars[25], pp->state_vars[26], pp->state_vars[27], pp->state_vars[28], pp->state_vars[29],\
+    pp->state_vars[30], pp->state_vars[31], pp->state_vars[32], pp->state_vars[33], pp->state_vars[34],\
+    pp->state_vars[35], pp->state_vars[36], pp->state_vars[37], pp->state_vars[38], pp->state_vars[39],\
+    pp->state_vars[40], pp->state_vars[41], pp->state_vars[42], pp->state_vars[43], pp->state_vars[44],\
+    pp->state_vars[45], pp->state_vars[46], pp->state_vars[47], pp->state_vars[48], pp->state_vars[49],\
+    pp->state_vars[50], pp->state_vars[51], pp->state_vars[52], pp->state_vars[53], pp->state_vars[54],\
+    pp->state_vars[55], pp->state_vars[56], pp->state_vars[57], pp->state_vars[58], pp->state_vars[59],\
+    pp->state_vars[60], pp->state_vars[61], pp->state_vars[62], pp->state_vars[63], pp->state_vars[64],\
+    pp->state_vars[65], pp->state_vars[66], pp->state_vars[67], pp->state_vars[68], pp->state_vars[69],\
+    pp->state_vars[70], pp->state_vars[71], pp->state_vars[72], pp->state_vars[73], pp->state_vars[74],\
+};\
+\
+[[maybe_unused]] arb_value_type* _pp_var_PRE[50] = {\
+    pp->state_vars[75], pp->state_vars[76], pp->state_vars[77], pp->state_vars[78], pp->state_vars[79],\
+    pp->state_vars[80], pp->state_vars[81], pp->state_vars[82], pp->state_vars[83], pp->state_vars[84],\
+    pp->state_vars[85], pp->state_vars[86], pp->state_vars[87], pp->state_vars[88], pp->state_vars[89],\
+    pp->state_vars[90], pp->state_vars[91], pp->state_vars[92], pp->state_vars[93], pp->state_vars[94],\
+    pp->state_vars[95], pp->state_vars[96], pp->state_vars[97], pp->state_vars[98], pp->state_vars[99],\
+    pp->state_vars[100], pp->state_vars[101], pp->state_vars[102], pp->state_vars[103], pp->state_vars[104],\
+    pp->state_vars[105], pp->state_vars[106], pp->state_vars[107], pp->state_vars[108], pp->state_vars[109],\
+    pp->state_vars[110], pp->state_vars[111], pp->state_vars[112], pp->state_vars[113], pp->state_vars[114],\
+    pp->state_vars[115], pp->state_vars[116], pp->state_vars[117], pp->state_vars[118], pp->state_vars[119],\
+    pp->state_vars[120], pp->state_vars[121], pp->state_vars[122], pp->state_vars[123], pp->state_vars[124],\
+};\
 //End of IFACEBLOCK
 
 // procedure prototypes
@@ -114,7 +138,7 @@ static void init(arb_mechanism_ppack* pp) {
         _pp_var_z[i_] =  0.;
         _pp_var_u[i_] = _pp_var_u0;
         _pp_var_tsyn[i_] = t;
-        _pp_var_tspike[i_] =  1e12; // EDITTED
+        _pp_var_tspike[0][i_] =  1e12; // EDITTED
     }
     if (!_pp_var_multiplicity) return;
     for (arb_size_type ix = 0; ix < 4; ++ix) {
@@ -190,12 +214,11 @@ static void compute_currents(arb_mechanism_ppack* pp) {
         auto NTdiffWave = _pp_var_T[i_];
         const auto max_pulses = std::min(numpulses, 50); 
 	for (unsigned pulse = 0; pulse < max_pulses; ++pulse) {
-            auto offset = pulse*_pp_var_width + i_;
-            auto ts     = _pp_var_tspike[offset]; 
+            auto ts     = _pp_var_tspike[pulse][i_]; 
 
             auto delta_t = t - ts; 
             if (delta_t > 0.) {
-                auto pre = _pp_var_PRE[offset]; 
+                auto pre = _pp_var_PRE[pulse][i_]; 
                 auto invariant = delta_t*diff_4; 
                 NTdiffWave += pre*mres*std::exp(-rsq/invariant)/(3.14159*invariant*lamd_scaled);
             }
@@ -283,9 +306,9 @@ static void apply_events(arb_mechanism_ppack* pp, arb_deliverable_event_stream* 
                     _pp_var_u[i_] = u;
 
                     // START EDIT
-                    auto offset = (numpulses%50)*_pp_var_width; // rolling window update
-                    _pp_var_tspike[offset+i_] = t; 
-                    _pp_var_PRE[offset+i_]    = y; 
+                    auto pulse = (numpulses%50); // rolling window update
+                    _pp_var_tspike[pulse][i_] = t; 
+                    _pp_var_PRE[pulse][i_]    = y; 
                     // END EDIT
 
                     _pp_var_numpulses[i_] = numpulses + 1.;
