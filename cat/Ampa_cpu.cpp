@@ -69,9 +69,8 @@ static constexpr unsigned min_align_ = std::max(alignof(arb_value_type), alignof
 [[maybe_unused]] auto* _pp_var_y = pp->state_vars[22];\
 [[maybe_unused]] auto* _pp_var_z = pp->state_vars[23];\
 [[maybe_unused]] auto* _pp_var_u = pp->state_vars[24];\
-[[maybe_unused]] auto* _pp_var_tsyn = pp->state_vars[25];\
-[[maybe_unused]] auto* _pp_var_tspike = pp->state_vars[26];\
-[[maybe_unused]] auto* _pp_var_PRE    = pp->state_vars[76];\
+[[maybe_unused]] auto* _pp_var_tspike = pp->state_vars[25];\
+[[maybe_unused]] auto* _pp_var_PRE    = pp->state_vars[75];\
 \
 [[maybe_unused]] auto* _pp_var_gmax = pp->parameters[0];\
 [[maybe_unused]] auto* _pp_var_Cdur = pp->parameters[1];\
@@ -139,10 +138,10 @@ static void advance_state(arb_mechanism_ppack* pp) {
 
         auto tr = _pp_var_Trelease[i_];
         auto k  = _pp_var_kB[i_];
-        auto ratio = (tr^2)/(tr+kb)^2
+        auto ratio = std::pow(tr,2)/std::pow((tr+k),2);
 
-        auto r1 = _pp_var_r1FIX[i_] * trsq / trkbsq;
-        auto r6 = _pp_var_r6FIX[i_] * trsq / trkbsq;
+        auto r1 = _pp_var_r1FIX[i_] * ratio;
+        auto r6 = _pp_var_r6FIX[i_] * ratio;
 
         // Solve ODEs 
         auto t0  =  -r6 * dt;
@@ -181,7 +180,7 @@ static void compute_currents(arb_mechanism_ppack* pp) {
         const auto r = _pp_var_R[i_];
         const auto diff = _pp_var_Diff[i_];
         const auto lamd = _pp_var_lamd[i_];
-        const auto numpulses = _pp_var_numpulses[i_];
+        const auto numpulses = (int)_pp_var_numpulses[i_];
 
         // Calculate
         const auto rsq = r*r;  
@@ -198,7 +197,7 @@ static void compute_currents(arb_mechanism_ppack* pp) {
             if (delta_t > 0.) {
                 auto pre = _pp_var_PRE[offset]; 
                 auto invariant = delta_t*diff_4; 
-                NTdiffWave += pre*mres*std::exp(-rsq/invariant)/(3.14159*invariant*lamd_scaled)
+                NTdiffWave += pre*mres*std::exp(-rsq/invariant)/(3.14159*invariant*lamd_scaled);
             }
         }
 
@@ -259,7 +258,7 @@ static void apply_events(arb_mechanism_ppack* pp, arb_deliverable_event_stream* 
                     const auto tau_facil = _pp_var_tau_facil[i_];
                     const auto U         = _pp_var_U[i_];
                     const auto Tmax      = _pp_var_Tmax[i_];
-                    const auto numpulses = _pp_var_numpulses[i_];
+                    const auto numpulses = (int)_pp_var_numpulses[i_];
 
                     // Modify
                     z = z*exp(-(t-tsyn)/tau_rec);
@@ -305,7 +304,7 @@ static void post_event(arb_mechanism_ppack*) {}
 } // namespace kernel_Ampa
 
 extern "C" {
-  arb_mechanism_interface* make__Ampa_interface_multicore() {
+  arb_mechanism_interface* make_arb_syn_catalogue_Ampa_interface_multicore() {
     static arb_mechanism_interface result;
     result.partition_width = kernel_Ampa::simd_width_;
     result.backend = arb_backend_kind_cpu;
