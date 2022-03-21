@@ -5,6 +5,8 @@
 #include <arbor/mechanism_abi.h>
 #include <arbor/math.hpp>
 
+namespace arb {
+namespace Ampa_catalogue {
 namespace kernel_Ampa {
 
 using ::arb::math::exprelr;
@@ -325,19 +327,21 @@ static void post_event(arb_mechanism_ppack*) {}
 // Procedure definitions
 #undef PPACK_IFACE_BLOCK
 } // namespace kernel_Ampa
+} // namespace default_catalogue
+} // namespace arb
 
 extern "C" {
-  arb_mechanism_interface* make_arb_syn_catalogue_Ampa_interface_multicore() {
+  arb_mechanism_interface* make_arb_Ampa_catalogue_Ampa_interface_multicore() {
     static arb_mechanism_interface result;
-    result.partition_width = kernel_Ampa::simd_width_;
+    result.partition_width = arb::Ampa_catalogue::kernel_Ampa::simd_width_;
     result.backend = arb_backend_kind_cpu;
-    result.alignment = kernel_Ampa::min_align_;
-    result.init_mechanism = kernel_Ampa::init;
-    result.compute_currents = kernel_Ampa::compute_currents;
-    result.apply_events = kernel_Ampa::apply_events;
-    result.advance_state = kernel_Ampa::advance_state;
-    result.write_ions = kernel_Ampa::write_ions;
-    result.post_event = kernel_Ampa::post_event;
+    result.alignment = arb::Ampa_catalogue::kernel_Ampa::min_align_;
+    result.init_mechanism = arb::Ampa_catalogue::kernel_Ampa::init;
+    result.compute_currents = arb::Ampa_catalogue::kernel_Ampa::compute_currents;
+    result.apply_events = arb::Ampa_catalogue::kernel_Ampa::apply_events;
+    result.advance_state = arb::Ampa_catalogue::kernel_Ampa::advance_state;
+    result.write_ions = arb::Ampa_catalogue::kernel_Ampa::write_ions;
+    result.post_event = arb::Ampa_catalogue::kernel_Ampa::post_event;
     return &result;
   }}
 

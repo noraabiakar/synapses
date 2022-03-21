@@ -4,7 +4,7 @@
 #include <arbor/mechanism_abi.h>
 
 extern "C" {
-  arb_mechanism_type make_arb_syn_catalogue_Ampa() {
+  arb_mechanism_type make_arb_Ampa_catalogue_Ampa() {
     // Tables
     static arb_field_info globals[] = {{ "u0", "1", 0, 0, 1 } };
     static arb_size_type n_globals = 1;
@@ -177,6 +177,6 @@ extern "C" {
     return result;
   }
 
-  arb_mechanism_interface* make_arb_syn_catalogue_Ampa_interface_multicore();
-  arb_mechanism_interface* make_arb_syn_catalogue_Ampa_interface_gpu() { return nullptr; }
+  arb_mechanism_interface* make_arb_Ampa_catalogue_Ampa_interface_multicore();
+  arb_mechanism_interface* make_arb_Ampa_catalogue_Ampa_interface_gpu() { return nullptr; }
 }
