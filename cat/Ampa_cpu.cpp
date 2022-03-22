@@ -54,24 +54,17 @@ static constexpr unsigned min_align_ = std::max(alignof(arb_value_type), alignof
 [[maybe_unused]] auto* _pp_var_v = pp->state_vars[4];\
 [[maybe_unused]] auto* _pp_var_g = pp->state_vars[5];\
 [[maybe_unused]] auto* _pp_var_T = pp->state_vars[6];\
-[[maybe_unused]] auto* _pp_var_r1 = pp->state_vars[7];\
-[[maybe_unused]] auto* _pp_var_r6 = pp->state_vars[8];\
-[[maybe_unused]] auto* _pp_var_Trelease = pp->state_vars[9];\
-[[maybe_unused]] auto* _pp_var_x = pp->state_vars[10];\
-[[maybe_unused]] auto* _pp_var_tsyn = pp->state_vars[11];\
-[[maybe_unused]] auto* _pp_var_Mres = pp->state_vars[12];\
-[[maybe_unused]] auto* _pp_var_NTdiffusion = pp->state_vars[13];\
-[[maybe_unused]] auto* _pp_var_numpulses = pp->state_vars[14];\
-[[maybe_unused]] auto* _pp_var_xview = pp->state_vars[15];\
-[[maybe_unused]] auto* _pp_var_yview = pp->state_vars[16];\
-[[maybe_unused]] auto* _pp_var_zview = pp->state_vars[17];\
-[[maybe_unused]] auto* _pp_var_Pview = pp->state_vars[18];\
-[[maybe_unused]] auto* _pp_var_on = pp->state_vars[19];\
-[[maybe_unused]] auto* _pp_var_nspike = pp->state_vars[20];\
-[[maybe_unused]] auto* _pp_var_t0 = pp->state_vars[21];\
-[[maybe_unused]] auto* _pp_var_y = pp->state_vars[22];\
-[[maybe_unused]] auto* _pp_var_z = pp->state_vars[23];\
-[[maybe_unused]] auto* _pp_var_u = pp->state_vars[24];\
+[[maybe_unused]] auto* _pp_var_Trelease = pp->state_vars[7];\
+[[maybe_unused]] auto* _pp_var_x = pp->state_vars[8];\
+[[maybe_unused]] auto* _pp_var_tsyn = pp->state_vars[9];\
+[[maybe_unused]] auto* _pp_var_Mres = pp->state_vars[10];\
+[[maybe_unused]] auto* _pp_var_NTdiffusion = pp->state_vars[11];\
+[[maybe_unused]] auto* _pp_var_numpulses = pp->state_vars[12];\
+[[maybe_unused]] auto* _pp_var_on = pp->state_vars[13];\
+[[maybe_unused]] auto* _pp_var_t0 = pp->state_vars[14];\
+[[maybe_unused]] auto* _pp_var_y = pp->state_vars[15];\
+[[maybe_unused]] auto* _pp_var_z = pp->state_vars[16];\
+[[maybe_unused]] auto* _pp_var_u = pp->state_vars[17];\
 \
 [[maybe_unused]] auto* _pp_var_gmax = pp->parameters[0];\
 [[maybe_unused]] auto* _pp_var_Cdur = pp->parameters[1];\
@@ -92,29 +85,29 @@ static constexpr unsigned min_align_ = std::max(alignof(arb_value_type), alignof
 [[maybe_unused]] auto* _pp_var_lamd = pp->parameters[16];\
 \
 [[maybe_unused]] arb_value_type* _pp_var_tspike[50] = {\
-    pp->state_vars[25], pp->state_vars[26], pp->state_vars[27], pp->state_vars[28], pp->state_vars[29],\
-    pp->state_vars[30], pp->state_vars[31], pp->state_vars[32], pp->state_vars[33], pp->state_vars[34],\
-    pp->state_vars[35], pp->state_vars[36], pp->state_vars[37], pp->state_vars[38], pp->state_vars[39],\
-    pp->state_vars[40], pp->state_vars[41], pp->state_vars[42], pp->state_vars[43], pp->state_vars[44],\
-    pp->state_vars[45], pp->state_vars[46], pp->state_vars[47], pp->state_vars[48], pp->state_vars[49],\
-    pp->state_vars[50], pp->state_vars[51], pp->state_vars[52], pp->state_vars[53], pp->state_vars[54],\
-    pp->state_vars[55], pp->state_vars[56], pp->state_vars[57], pp->state_vars[58], pp->state_vars[59],\
-    pp->state_vars[60], pp->state_vars[61], pp->state_vars[62], pp->state_vars[63], pp->state_vars[64],\
-    pp->state_vars[65], pp->state_vars[66], pp->state_vars[67], pp->state_vars[68], pp->state_vars[69],\
-    pp->state_vars[70], pp->state_vars[71], pp->state_vars[72], pp->state_vars[73], pp->state_vars[74],\
+    pp->state_vars[18], pp->state_vars[19], pp->state_vars[20], pp->state_vars[21], pp->state_vars[22],\
+    pp->state_vars[23], pp->state_vars[24], pp->state_vars[25], pp->state_vars[26], pp->state_vars[27],\
+    pp->state_vars[28], pp->state_vars[29], pp->state_vars[30], pp->state_vars[31], pp->state_vars[32],\
+    pp->state_vars[33], pp->state_vars[34], pp->state_vars[35], pp->state_vars[36], pp->state_vars[37],\
+    pp->state_vars[38], pp->state_vars[39], pp->state_vars[40], pp->state_vars[41], pp->state_vars[42],\
+    pp->state_vars[43], pp->state_vars[44], pp->state_vars[45], pp->state_vars[46], pp->state_vars[47],\
+    pp->state_vars[48], pp->state_vars[49], pp->state_vars[50], pp->state_vars[51], pp->state_vars[52],\
+    pp->state_vars[53], pp->state_vars[54], pp->state_vars[55], pp->state_vars[56], pp->state_vars[57],\
+    pp->state_vars[58], pp->state_vars[59], pp->state_vars[60], pp->state_vars[61], pp->state_vars[62],\
+    pp->state_vars[63], pp->state_vars[64], pp->state_vars[65], pp->state_vars[66], pp->state_vars[67],\
 };\
 \
 [[maybe_unused]] arb_value_type* _pp_var_PRE[50] = {\
-    pp->state_vars[75], pp->state_vars[76], pp->state_vars[77], pp->state_vars[78], pp->state_vars[79],\
-    pp->state_vars[80], pp->state_vars[81], pp->state_vars[82], pp->state_vars[83], pp->state_vars[84],\
-    pp->state_vars[85], pp->state_vars[86], pp->state_vars[87], pp->state_vars[88], pp->state_vars[89],\
-    pp->state_vars[90], pp->state_vars[91], pp->state_vars[92], pp->state_vars[93], pp->state_vars[94],\
-    pp->state_vars[95], pp->state_vars[96], pp->state_vars[97], pp->state_vars[98], pp->state_vars[99],\
-    pp->state_vars[100], pp->state_vars[101], pp->state_vars[102], pp->state_vars[103], pp->state_vars[104],\
-    pp->state_vars[105], pp->state_vars[106], pp->state_vars[107], pp->state_vars[108], pp->state_vars[109],\
-    pp->state_vars[110], pp->state_vars[111], pp->state_vars[112], pp->state_vars[113], pp->state_vars[114],\
-    pp->state_vars[115], pp->state_vars[116], pp->state_vars[117], pp->state_vars[118], pp->state_vars[119],\
-    pp->state_vars[120], pp->state_vars[121], pp->state_vars[122], pp->state_vars[123], pp->state_vars[124],\
+    pp->state_vars[68], pp->state_vars[69], pp->state_vars[70], pp->state_vars[71], pp->state_vars[72],\
+    pp->state_vars[73], pp->state_vars[74], pp->state_vars[75], pp->state_vars[76], pp->state_vars[77],\
+    pp->state_vars[78], pp->state_vars[79], pp->state_vars[80], pp->state_vars[81], pp->state_vars[82],\
+    pp->state_vars[83], pp->state_vars[84], pp->state_vars[85], pp->state_vars[86], pp->state_vars[87],\
+    pp->state_vars[88], pp->state_vars[89], pp->state_vars[90], pp->state_vars[91], pp->state_vars[92],\
+    pp->state_vars[93], pp->state_vars[94], pp->state_vars[95], pp->state_vars[96], pp->state_vars[97],\
+    pp->state_vars[98], pp->state_vars[99], pp->state_vars[100], pp->state_vars[101], pp->state_vars[102],\
+    pp->state_vars[103], pp->state_vars[104], pp->state_vars[105], pp->state_vars[106], pp->state_vars[107],\
+    pp->state_vars[108], pp->state_vars[109], pp->state_vars[110], pp->state_vars[111], pp->state_vars[112],\
+    pp->state_vars[113], pp->state_vars[114], pp->state_vars[115], pp->state_vars[116], pp->state_vars[117],\
 };\
 //End of IFACEBLOCK
 
@@ -135,7 +128,6 @@ static void init(arb_mechanism_ppack* pp) {
         _pp_var_Trelease[i_] =  0.;
         _pp_var_Mres[i_] =  1.6605778811026237e-06*_pp_var_M[i_];
         _pp_var_numpulses[i_] =  0.;
-        _pp_var_zview[i_] =  0.;
         _pp_var_on[i_] =  0.;
         _pp_var_y[i_] =  0.;
         _pp_var_z[i_] =  0.;
@@ -156,15 +148,6 @@ static void advance_state(arb_mechanism_ppack* pp) {
     for (arb_size_type i_ = 0; i_ < _pp_var_width; ++i_) {
         auto node_indexi_ = _pp_var_node_index[i_];
         arb_value_type dt = _pp_var_vec_dt[node_indexi_];
-        //std::cout << "i  = " << i_ << std::endl;
-        //std::cout << "ni = " << node_indexi_ << std::endl;
-
-        std::cout << "C = " << _pp_var_C[i_] << std::endl;
-        std::cout << "D = " << _pp_var_D[i_] << std::endl;
-        std::cout << "O = " << _pp_var_O[i_] << std::endl;
-        //std::cout << "t = " << _pp_var_vec_t[_pp_var_vec_di[node_indexi_]] << std::endl;
-        //std::cout << "dt = " << _pp_var_vec_dt[node_indexi_] << std::endl;
-        //std::cout << "delay = " << _pp_var_delay[i_] << std::endl;
         
         // Read 
         double O  = _pp_var_O[i_];
@@ -179,12 +162,6 @@ static void advance_state(arb_mechanism_ppack* pp) {
         double r1 = _pp_var_r1FIX[i_] * ratio;
         double r6 = _pp_var_r6FIX[i_] * ratio;
 
-        //std::cout << "tr = " << _pp_var_Trelease[i_] << std::endl;
-        //std::cout << "k  = " << _pp_var_kB[i_] << std::endl;
-        //std::cout << "ratio  = " << ratio << std::endl;
-        //std::cout << "r1 = " << _pp_var_r1FIX[i_] << std::endl;
-        //std::cout << "r6 = " << _pp_var_r6FIX[i_] << std::endl;
-
         // Solve ODEs 
         double t0  =  -r6 * dt;
         double t1  =  -r1 * dt;
@@ -198,19 +175,6 @@ static void advance_state(arb_mechanism_ppack* pp) {
         double t9  = (t6 * D) - (t0 * t7);
         double t10 = t6 * t3;
         double t11 = (t6 * O) - (t1 * t7);
-
-        //std::cout << "t0 = " << t0 << std::endl;
-        //std::cout << "t1 = " << t1 << std::endl;
-        //std::cout << "t2 = " << t2 << std::endl;
-        //std::cout << "t3 = " << t3 << std::endl;
-        //std::cout << "t4 = " << t4 << std::endl;
-        //std::cout << "t5 = " << t5 << std::endl;
-        //std::cout << "t6 = " << t6 << std::endl;
-        //std::cout << "t7 = " << t7 << std::endl;
-        //std::cout << "t8 = " << t8 << std::endl;
-        //std::cout << "t9 = " << t9 << std::endl;
-        //std::cout << "t10 = " << t10 << std::endl;
-        //std::cout << "t11 = " << t11 << std::endl << std::endl;
 
         // Update 
         if (tr > 0) {
@@ -259,7 +223,6 @@ static void compute_currents(arb_mechanism_ppack* pp) {
 
         // Update
         _pp_var_Trelease[i_] = NTdiffWave;
-        std::cout << "Trelease[" << i_ << "] = " << NTdiffWave << "; at t = " << t << std::endl;
         // END EDIT
 
         // Reset 
@@ -301,7 +264,6 @@ static void apply_events(arb_mechanism_ppack* pp, arb_deliverable_event_stream* 
 
                 arb_value_type t = _pp_var_vec_t[vec_dii_];
                 if (!_pp_var_on[i_]) {
-                    //std::cout << "do something! at " << t << std::endl;
                     _pp_var_on[i_] =  1.0;
 
                     // Read
@@ -345,8 +307,6 @@ static void apply_events(arb_mechanism_ppack* pp, arb_deliverable_event_stream* 
                     _pp_var_tspike[pulse][i_] = t; 
                     _pp_var_PRE[pulse][i_]    = y; 
 
-                    //std::cout << "tspike[" << pulse << "] = " << _pp_var_tspike[pulse][i_] << std::endl;
-                    //std::cout << "PRE[" << pulse << "] = " << _pp_var_PRE[pulse][i_] << std::endl << std::endl;
                     // END EDIT
 
                     _pp_var_numpulses[i_] = numpulses + 1.;
