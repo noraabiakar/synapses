@@ -1,3 +1,4 @@
+#include <iostream>
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
@@ -155,38 +156,68 @@ static void advance_state(arb_mechanism_ppack* pp) {
     for (arb_size_type i_ = 0; i_ < _pp_var_width; ++i_) {
         auto node_indexi_ = _pp_var_node_index[i_];
         arb_value_type dt = _pp_var_vec_dt[node_indexi_];
+        //std::cout << "i  = " << i_ << std::endl;
+        //std::cout << "ni = " << node_indexi_ << std::endl;
+
+        std::cout << "C = " << _pp_var_C[i_] << std::endl;
+        std::cout << "D = " << _pp_var_D[i_] << std::endl;
+        std::cout << "O = " << _pp_var_O[i_] << std::endl;
+        //std::cout << "t = " << _pp_var_vec_t[_pp_var_vec_di[node_indexi_]] << std::endl;
+        //std::cout << "dt = " << _pp_var_vec_dt[node_indexi_] << std::endl;
+        //std::cout << "delay = " << _pp_var_delay[i_] << std::endl;
         
         // Read 
-        auto O  = _pp_var_O[i_];
-        auto D  = _pp_var_D[i_];
-        auto r2 = _pp_var_r2[i_];
-        auto r5 = _pp_var_r5[i_];
+        double O  = _pp_var_O[i_];
+        double D  = _pp_var_D[i_];
+        double r2 = _pp_var_r2[i_];
+        double r5 = _pp_var_r5[i_];
 
-        auto tr = _pp_var_Trelease[i_];
-        auto k  = _pp_var_kB[i_];
-        auto ratio = std::pow(tr,2)/std::pow((tr+k),2);
+        double tr = _pp_var_Trelease[i_];
+        double k  = _pp_var_kB[i_];
+        double ratio = std::pow(tr,2)/std::pow((tr+k),2);
 
-        auto r1 = _pp_var_r1FIX[i_] * ratio;
-        auto r6 = _pp_var_r6FIX[i_] * ratio;
+        double r1 = _pp_var_r1FIX[i_] * ratio;
+        double r6 = _pp_var_r6FIX[i_] * ratio;
+
+        //std::cout << "tr = " << _pp_var_Trelease[i_] << std::endl;
+        //std::cout << "k  = " << _pp_var_kB[i_] << std::endl;
+        //std::cout << "ratio  = " << ratio << std::endl;
+        //std::cout << "r1 = " << _pp_var_r1FIX[i_] << std::endl;
+        //std::cout << "r6 = " << _pp_var_r6FIX[i_] << std::endl;
 
         // Solve ODEs 
-        auto t0  =  -r6 * dt;
-        auto t1  =  -r1 * dt;
-        auto t2  =  1.0 + r5*dt;
-        auto t3  =  1.0 + r2*dt;
-        auto t4  = -t3 * t1;
-        auto t5  = t3 - O;
-        auto t6  = (t2 * t4) - (t3 * t0);
-        auto t7  = (t2 * t5) - (t3 * D);
-        auto t8  = t6 * t2;
-        auto t9  = (t6 * D) - (t0 * t7);
-        auto t10 = t6 * t3;
-        auto t11 = (t6 * O) - (t1 * t7);
+        double t0  =  -r6 * dt;
+        double t1  =  -r1 * dt;
+        double t2  =  1.0 + r5*dt;
+        double t3  =  1.0 + r2*dt;
+        double t4  = t3 - t1;
+        double t5  = t3 - O;
+        double t6  = (t2 * t4) - (t3 * t0);
+        double t7  = (t2 * t5) - (t3 * D);
+        double t8  = t6 * t2;
+        double t9  = (t6 * D) - (t0 * t7);
+        double t10 = t6 * t3;
+        double t11 = (t6 * O) - (t1 * t7);
+
+        //std::cout << "t0 = " << t0 << std::endl;
+        //std::cout << "t1 = " << t1 << std::endl;
+        //std::cout << "t2 = " << t2 << std::endl;
+        //std::cout << "t3 = " << t3 << std::endl;
+        //std::cout << "t4 = " << t4 << std::endl;
+        //std::cout << "t5 = " << t5 << std::endl;
+        //std::cout << "t6 = " << t6 << std::endl;
+        //std::cout << "t7 = " << t7 << std::endl;
+        //std::cout << "t8 = " << t8 << std::endl;
+        //std::cout << "t9 = " << t9 << std::endl;
+        //std::cout << "t10 = " << t10 << std::endl;
+        //std::cout << "t11 = " << t11 << std::endl << std::endl;
 
         // Update 
-        _pp_var_C[i_] = t7 / t6;
-        _pp_var_D[i_] = t9 / t8;
-        _pp_var_O[i_] = t11 / t10;
+        if (tr > 0) {
+            _pp_var_C[i_] = t7 / t6;
+            _pp_var_D[i_] = t9 / t8;
+            _pp_var_O[i_] = t11 / t10;
+        }
         _pp_var_delay[i_] -= dt;
     }
 }
@@ -228,10 +259,11 @@ static void compute_currents(arb_mechanism_ppack* pp) {
 
         // Update
         _pp_var_Trelease[i_] = NTdiffWave;
+        std::cout << "Trelease[" << i_ << "] = " << NTdiffWave << "; at t = " << t << std::endl;
         // END EDIT
 
         // Reset 
-        if (_pp_var_delay[i_]== 0.) {
+        if (_pp_var_delay[i_]< 0.) {
             _pp_var_T[i_] =  0.;
             _pp_var_on[i_] =  0.;
         }
@@ -269,6 +301,7 @@ static void apply_events(arb_mechanism_ppack* pp, arb_deliverable_event_stream* 
 
                 arb_value_type t = _pp_var_vec_t[vec_dii_];
                 if (!_pp_var_on[i_]) {
+                    //std::cout << "do something! at " << t << std::endl;
                     _pp_var_on[i_] =  1.0;
 
                     // Read
@@ -311,6 +344,9 @@ static void apply_events(arb_mechanism_ppack* pp, arb_deliverable_event_stream* 
                     auto pulse = (numpulses%50); // rolling window update
                     _pp_var_tspike[pulse][i_] = t; 
                     _pp_var_PRE[pulse][i_]    = y; 
+
+                    //std::cout << "tspike[" << pulse << "] = " << _pp_var_tspike[pulse][i_] << std::endl;
+                    //std::cout << "PRE[" << pulse << "] = " << _pp_var_PRE[pulse][i_] << std::endl << std::endl;
                     // END EDIT
 
                     _pp_var_numpulses[i_] = numpulses + 1.;
