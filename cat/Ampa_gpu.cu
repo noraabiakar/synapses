@@ -67,30 +67,30 @@ auto* _pp_var_R __attribute__((unused)) = params_.parameters[14];\
 auto* _pp_var_Diff __attribute__((unused)) = params_.parameters[15];\
 auto* _pp_var_lamd __attribute__((unused)) = params_.parameters[16];\
 \
-arb_value_type* __attribute__((unused)) _pp_var_tspike[50] = {\
-    pp->state_vars[18], pp->state_vars[19], pp->state_vars[20], pp->state_vars[21], pp->state_vars[22],\
-    pp->state_vars[23], pp->state_vars[24], pp->state_vars[25], pp->state_vars[26], pp->state_vars[27],\
-    pp->state_vars[28], pp->state_vars[29], pp->state_vars[30], pp->state_vars[31], pp->state_vars[32],\
-    pp->state_vars[33], pp->state_vars[34], pp->state_vars[35], pp->state_vars[36], pp->state_vars[37],\
-    pp->state_vars[38], pp->state_vars[39], pp->state_vars[40], pp->state_vars[41], pp->state_vars[42],\
-    pp->state_vars[43], pp->state_vars[44], pp->state_vars[45], pp->state_vars[46], pp->state_vars[47],\
-    pp->state_vars[48], pp->state_vars[49], pp->state_vars[50], pp->state_vars[51], pp->state_vars[52],\
-    pp->state_vars[53], pp->state_vars[54], pp->state_vars[55], pp->state_vars[56], pp->state_vars[57],\
-    pp->state_vars[58], pp->state_vars[59], pp->state_vars[60], pp->state_vars[61], pp->state_vars[62],\
-    pp->state_vars[63], pp->state_vars[64], pp->state_vars[65], pp->state_vars[66], pp->state_vars[67],\
+arb_value_type* _pp_var_tspike[50] __attribute__((unused)) = {\
+    params_.state_vars[18], params_.state_vars[19], params_.state_vars[20], params_.state_vars[21], params_.state_vars[22],\
+    params_.state_vars[23], params_.state_vars[24], params_.state_vars[25], params_.state_vars[26], params_.state_vars[27],\
+    params_.state_vars[28], params_.state_vars[29], params_.state_vars[30], params_.state_vars[31], params_.state_vars[32],\
+    params_.state_vars[33], params_.state_vars[34], params_.state_vars[35], params_.state_vars[36], params_.state_vars[37],\
+    params_.state_vars[38], params_.state_vars[39], params_.state_vars[40], params_.state_vars[41], params_.state_vars[42],\
+    params_.state_vars[43], params_.state_vars[44], params_.state_vars[45], params_.state_vars[46], params_.state_vars[47],\
+    params_.state_vars[48], params_.state_vars[49], params_.state_vars[50], params_.state_vars[51], params_.state_vars[52],\
+    params_.state_vars[53], params_.state_vars[54], params_.state_vars[55], params_.state_vars[56], params_.state_vars[57],\
+    params_.state_vars[58], params_.state_vars[59], params_.state_vars[60], params_.state_vars[61], params_.state_vars[62],\
+    params_.state_vars[63], params_.state_vars[64], params_.state_vars[65], params_.state_vars[66], params_.state_vars[67],\
 };\
 \
-arb_value_type* ___attribute__((unused)) pp_var_PRE[50] = {\
-    pp->state_vars[68], pp->state_vars[69], pp->state_vars[70], pp->state_vars[71], pp->state_vars[72],\
-    pp->state_vars[73], pp->state_vars[74], pp->state_vars[75], pp->state_vars[76], pp->state_vars[77],\
-    pp->state_vars[78], pp->state_vars[79], pp->state_vars[80], pp->state_vars[81], pp->state_vars[82],\
-    pp->state_vars[83], pp->state_vars[84], pp->state_vars[85], pp->state_vars[86], pp->state_vars[87],\
-    pp->state_vars[88], pp->state_vars[89], pp->state_vars[90], pp->state_vars[91], pp->state_vars[92],\
-    pp->state_vars[93], pp->state_vars[94], pp->state_vars[95], pp->state_vars[96], pp->state_vars[97],\
-    pp->state_vars[98], pp->state_vars[99], pp->state_vars[100], pp->state_vars[101], pp->state_vars[102],\
-    pp->state_vars[103], pp->state_vars[104], pp->state_vars[105], pp->state_vars[106], pp->state_vars[107],\
-    pp->state_vars[108], pp->state_vars[109], pp->state_vars[110], pp->state_vars[111], pp->state_vars[112],\
-    pp->state_vars[113], pp->state_vars[114], pp->state_vars[115], pp->state_vars[116], pp->state_vars[117],\
+arb_value_type* _pp_var_PRE[50] __attribute__((unused)) = {\
+    params_.state_vars[68], params_.state_vars[69], params_.state_vars[70], params_.state_vars[71], params_.state_vars[72],\
+    params_.state_vars[73], params_.state_vars[74], params_.state_vars[75], params_.state_vars[76], params_.state_vars[77],\
+    params_.state_vars[78], params_.state_vars[79], params_.state_vars[80], params_.state_vars[81], params_.state_vars[82],\
+    params_.state_vars[83], params_.state_vars[84], params_.state_vars[85], params_.state_vars[86], params_.state_vars[87],\
+    params_.state_vars[88], params_.state_vars[89], params_.state_vars[90], params_.state_vars[91], params_.state_vars[92],\
+    params_.state_vars[93], params_.state_vars[94], params_.state_vars[95], params_.state_vars[96], params_.state_vars[97],\
+    params_.state_vars[98], params_.state_vars[99], params_.state_vars[100], params_.state_vars[101], params_.state_vars[102],\
+    params_.state_vars[103], params_.state_vars[104], params_.state_vars[105], params_.state_vars[106], params_.state_vars[107],\
+    params_.state_vars[108], params_.state_vars[109], params_.state_vars[110], params_.state_vars[111], params_.state_vars[112],\
+    params_.state_vars[113], params_.state_vars[114], params_.state_vars[115], params_.state_vars[116], params_.state_vars[117],\
 };\
 //End of IFACEBLOCK
 
@@ -151,12 +151,12 @@ void advance_state(arb_mechanism_ppack params_) {
         double r2 = _pp_var_r2[tid_];
         double r5 = _pp_var_r5[tid_];
 
-        double tr = _pp_var_Trelease[i_];
-        double k  = _pp_var_kB[i_];
+        double tr = _pp_var_Trelease[tid_];
+        double k  = _pp_var_kB[tid_];
         double ratio = std::pow(tr,2)/std::pow((tr+k),2);
 
-        double r1 = _pp_var_r1FIX[i_] * ratio;
-        double r6 = _pp_var_r6FIX[i_] * ratio;
+        double r1 = _pp_var_r1FIX[tid_] * ratio;
+        double r6 = _pp_var_r6FIX[tid_] * ratio;
 
         // Solve ODEs 
         double t0  =  -r6 * dt;
@@ -170,6 +170,7 @@ void advance_state(arb_mechanism_ppack params_) {
         double t8  = t6 * t2;
         double t9  = (t6 * D) - (t0 * t7);
         double t10 = t6 * t3;
+        double t11 = (t6 * O) - (t1 * t7);
 
 
         // Update 
@@ -209,7 +210,7 @@ void compute_currents(arb_mechanism_ppack params_) {
         const auto lamd_scaled = (1e-3)*lamd;
 
         auto NTdiffWave = _pp_var_T[tid_];
-        const auto max_pulses = std::min(numpulses, 50); 
+        const auto max_pulses = min(numpulses, 50); 
 	for (unsigned pulse = 0; pulse < max_pulses; ++pulse) {
             auto ts     = _pp_var_tspike[pulse][tid_]; 
 
@@ -238,7 +239,7 @@ void compute_currents(arb_mechanism_ppack params_) {
         const auto weight = _pp_var_weight[tid_];
 
         auto conductivity_ =  1e-06*gmax*O;
-        auto current       =  conductivity_*(v-Erev);
+        auto current_      =  conductivity_*(v-Erev);
         ::arb::gpu::reduce_by_key(_pp_var_weight[tid_]*conductivity_,_pp_var_vec_g, node_indexi_, lane_mask_);
         ::arb::gpu::reduce_by_key(_pp_var_weight[tid_]*current_,_pp_var_vec_i, node_indexi_, lane_mask_);
     }
@@ -254,7 +255,6 @@ void apply_events(arb_mechanism_ppack params_, arb_deliverable_event_stream stre
         for (auto p = begin; p<end; ++p) {
             if (p->mech_id==_pp_var_mechanism_id) {
                 auto tid_ = p->mech_index;
-                auto weight = p->weight;
 		auto node_indexi_ = _pp_var_node_index[tid_];
                 auto vec_dii_     = _pp_var_vec_di[node_indexi_];
 
@@ -263,9 +263,9 @@ void apply_events(arb_mechanism_ppack params_, arb_deliverable_event_stream stre
 
                     // Read
                     auto z = _pp_var_z[tid_];
-                    auto y = _pp_var_y[tii_];
-                    auto x = _pp_var_x[tii_];
-                    auto u = _pp_var_u[tii_];
+                    auto y = _pp_var_y[tid_];
+                    auto x = _pp_var_x[tid_];
+                    auto u = _pp_var_u[tid_];
 
                     const auto tsyn      = _pp_var_tsyn[tid_];
                     const auto tau_rec   = _pp_var_tau_rec[tid_];
@@ -293,9 +293,9 @@ void apply_events(arb_mechanism_ppack params_, arb_deliverable_event_stream stre
                     // Update
                     _pp_var_T[tid_] = Tmax*y;
                     _pp_var_z[tid_] = z;
-                    _pp_var_y[tii_] = y;
-                    _pp_var_x[tii_] = x;
-                    _pp_var_u[tii_] = u;
+                    _pp_var_y[tid_] = y;
+                    _pp_var_x[tid_] = x;
+                    _pp_var_u[tid_] = u;
 
                     // START EDIT
                     auto pulse = (numpulses%50); // rolling window update
