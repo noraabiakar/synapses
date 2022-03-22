@@ -178,5 +178,5 @@ extern "C" {
   }
 
   arb_mechanism_interface* make_arb_Ampa_catalogue_Ampa_interface_multicore();
-  arb_mechanism_interface* make_arb_Ampa_catalogue_Ampa_interface_gpu() { return nullptr; }
+  arb_mechanism_interface* make_arb_Ampa_catalogue_Ampa_interface_gpu();
 }
