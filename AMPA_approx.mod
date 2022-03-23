@@ -29,6 +29,8 @@ CONSTANT {
 }
 
 PARAMETER {
+    t
+
     : postsynaptic parameters
     gmax        = 1200  (pS)
     Cdur        = 0.3   (ms)
@@ -50,11 +52,12 @@ PARAMETER {
     Tmax          = 1     (mM)
 
     : Diffusion
-    M            = 21500
-    R             = 1.033 (um)
-    Diff          = 0.223 (um2/ms)
-    lamd          = 20    (nm)
-    t
+    M             = 21500
+    h             = 20    (um)    : Synaptic cleft height
+    r             = 0     (um)    <0, 3>  : needs to be obtained by BluPyOpt
+    a_ratio       = 0     (um)    <0, 1>  : needs to be obtained by BluPyOpt
+    b_ratio       = 0     (um)    <0, 1>  : needs to be obtained by BluPyOpt
+    c_ratio       = 0     (um)    <0, 1>  : needs to be obtained by BluPyOpt
 }
 
 
@@ -83,7 +86,6 @@ STATE {
 
     g_emission : glutamate concentration at the emission area
     g_active   : glutamate concentration at the active area
-    g_surround : glutamate concentration at the surroundings (elsewhere)
 }
 
 INITIAL {
@@ -100,6 +102,9 @@ INITIAL {
     z = 0
     u = u0
     tsyn = t
+
+    g_emission = 0
+    g_active = 0
 }
 
 BREAKPOINT {
@@ -130,17 +135,17 @@ KINETIC kstates {
 }
 
 KINETIC gstates {
-    LOCAL alpha, beta, gamma, delta, epsilon
+    LOCAL emission_area, active_area, alpha, beta, gamma, delta, epsilon
 
-    alpha = 0
-    beta = 0
-    gamma = 0
-    delta = 0
-    epsilon = 0
+    emission_area = 4*pi*r^2
+    active_area   = 4*pi*(r+h)^2
 
-    ~ g_emission <-> g_active   (alpha, beta)
-    ~ g_active   <-> g_surround (gamma, delta)
-    ~ g_surround <-> (epsilon, 0)
+    alpha = a_ratio*emission_area
+    beta  = b_ratio*emission_area
+    gamma = c_ratio*active_area
+
+    ~ g_emission <-> g_active (alpha, beta)
+    ~ g_active   <->          (gamma, 0)
 }
 
 DERIVATIVE sdelay {
@@ -168,6 +173,7 @@ NET_RECEIVE(weight) {
         y = y + x * u
 
         T = Tmax * y
+        g_active = g_active + Mres
         tsyn = t
     }
     delay = Cdur
