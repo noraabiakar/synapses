@@ -11,7 +11,8 @@ NEURON {
     RANGE r1FIX, r6FIX, r2, r5
     RANGE tau_1, tau_rec, tau_facil, U
     RANGE T, Tmax
-    RANGE M, Diff, R, lamd
+    RANGE M, r, h, a_ratio, b_ratio, c_ratio
+    RANGE g_emission, g_active, delay 
 }
 
 UNITS {
@@ -54,10 +55,10 @@ PARAMETER {
     : Diffusion
     M             = 21500
     h             = 20    (um)    : Synaptic cleft height
-    r             = 0     (um)    <0, 3>  : needs to be obtained by BluPyOpt
-    a_ratio       = 0     (um)    <0, 1>  : needs to be obtained by BluPyOpt
-    b_ratio       = 0     (um)    <0, 1>  : needs to be obtained by BluPyOpt
-    c_ratio       = 0     (um)    <0, 1>  : needs to be obtained by BluPyOpt
+    r             = 1.033 (um)    <0, 3>     : needs to be obtained by BluPyOpt
+    a_ratio       = 0     (um)    <0, 1000>  : needs to be obtained by BluPyOpt
+    b_ratio       = 0     (um)    <0, 1000>  : needs to be obtained by BluPyOpt
+    c_ratio       = 0     (um)    <0, 1000>  : needs to be obtained by BluPyOpt
 }
 
 
@@ -75,7 +76,6 @@ ASSIGNED {
     y
     z
     u
-    tsyn      (ms)
 }
 
 STATE {
@@ -86,6 +86,8 @@ STATE {
 
     g_emission : glutamate concentration at the emission area
     g_active   : glutamate concentration at the active area
+
+    Trelease
 }
 
 INITIAL {
@@ -123,7 +125,7 @@ BREAKPOINT {
 }
 
 KINETIC kstates {
-    LOCAL Trelease, r1, r6
+    LOCAL r1, r6
 
     Trelease = T + g_active
     r1 = r1FIX * Trelease^2 / (Trelease + kB)^2
@@ -137,8 +139,8 @@ KINETIC kstates {
 KINETIC gstates {
     LOCAL emission_area, active_area, alpha, beta, gamma, delta, epsilon
 
-    emission_area = 4*pi*r^2
-    active_area   = 4*pi*(r+h)^2
+    emission_area = 4*PI*r^2
+    active_area   = 4*PI*(r+h)^2
 
     alpha = a_ratio*emission_area
     beta  = b_ratio*emission_area

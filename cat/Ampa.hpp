@@ -16,20 +16,13 @@ extern "C" {
         { "v", "mV", NAN, -1e10, 1e10 },
         { "g", "pS", NAN, -1e10, 1e10 },
         { "T", "mM", NAN, -1e10, 1e10 },
-        { "r1", "/ ms", NAN, -1e10, 1e10 },
-        { "r6", "/ ms", NAN, -1e10, 1e10 },
         { "Trelease", "mM", NAN, -1e10, 1e10 },
         { "x", "", NAN, -1e10, 1e10 },
         { "tsyn", "ms", NAN, -1e10, 1e10 },
         { "Mres", "mM", NAN, -1e10, 1e10 },
         { "NTdiffusion", "mM", NAN, -1e10, 1e10 },
         { "numpulses", "", NAN, -1e10, 1e10 },
-        { "xview", "", NAN, -1e10, 1e10 },
-        { "yview", "", NAN, -1e10, 1e10 },
-        { "zview", "", NAN, -1e10, 1e10 },
-        { "Pview", "", NAN, -1e10, 1e10 },
         { "on", "", NAN, -1e10, 1e10 },
-        { "nspike", "", NAN, -1e10, 1e10 },
         { "t0", "ms", NAN, -1e10, 1e10 },
         { "y", "", NAN, -1e10, 1e10 },
         { "z", "", NAN, -1e10, 1e10 },
@@ -135,7 +128,7 @@ extern "C" {
         { "PRE48"   , "", NAN, -1e10, 1e10},
         { "PRE49"   , "", NAN, -1e10, 1e10},
     };
-    static arb_size_type n_state_vars = 125;  // add 100
+    static arb_size_type n_state_vars = 117;  // add 100
     static arb_field_info parameters[] = {
         { "gmax", "pS", 1200, -1e10, 1e10 },
         { "Cdur", "ms", 0.3, -1e10, 1e10 },
