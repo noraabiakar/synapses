@@ -117,7 +117,7 @@ BREAKPOINT {
     g = gmax * O
     i = (1e-6) * g * (v-Erev)
 
-    if (delay == 0) {
+    if (delay <= 0) {
         t0 = t
         T = 0
         on = 0
