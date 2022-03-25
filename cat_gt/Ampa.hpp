@@ -127,8 +127,9 @@ extern "C" {
         { "PRE47"   , "", NAN, -1e10, 1e10},
         { "PRE48"   , "", NAN, -1e10, 1e10},
         { "PRE49"   , "", NAN, -1e10, 1e10},
+        { "save"   , "", NAN, -1e10, 1e10},
     };
-    static arb_size_type n_state_vars = 117;  // add 100
+    static arb_size_type n_state_vars = 119;  // add 100
     static arb_field_info parameters[] = {
         { "gmax", "pS", 1200, -1e10, 1e10 },
         { "Cdur", "ms", 0.3, -1e10, 1e10 },

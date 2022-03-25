@@ -65,6 +65,7 @@ static constexpr unsigned min_align_ = std::max(alignof(arb_value_type), alignof
 [[maybe_unused]] auto* _pp_var_y = pp->state_vars[15];\
 [[maybe_unused]] auto* _pp_var_z = pp->state_vars[16];\
 [[maybe_unused]] auto* _pp_var_u = pp->state_vars[17];\
+[[maybe_unused]] auto* _pp_var_save = pp->state_vars[118];\
 \
 [[maybe_unused]] auto* _pp_var_gmax = pp->parameters[0];\
 [[maybe_unused]] auto* _pp_var_Cdur = pp->parameters[1];\
@@ -208,7 +209,7 @@ static void compute_currents(arb_mechanism_ppack* pp) {
         const auto diff_4 = diff*4;
         const auto lamd_scaled = (1e-3)*lamd;
 
-        auto NTdiffWave = _pp_var_T[i_];
+        double NTdiffWave = 0;//_pp_var_T[i_];
         const auto max_pulses = std::min(numpulses, 50); 
 	for (unsigned pulse = 0; pulse < max_pulses; ++pulse) {
             auto ts     = _pp_var_tspike[pulse][i_]; 
@@ -222,7 +223,8 @@ static void compute_currents(arb_mechanism_ppack* pp) {
         }
 
         // Update
-        _pp_var_Trelease[i_] = NTdiffWave;
+        _pp_var_save[i_] = NTdiffWave;
+        _pp_var_Trelease[i_] = NTdiffWave + _pp_var_T[i_];
         // END EDIT
 
         // Reset 
