@@ -54,16 +54,18 @@ class single_cell_recipe (arbor.recipe):
         return []
 
     def event_generators(self, gid):
-        sched = arbor.explicit_schedule([1, 1.5, 2]) # one event at 1 ms
+        sched = arbor.explicit_schedule([1]) # one event at 1 ms
         return [arbor.event_generator('syn', 0, sched)]
 
     def probes(self, gid):
         if self.type == 'approx':
             #return [arbor.cable_probe_point_state(target=0, mechanism='Ampa', state='Trelease')]
-            return [arbor.cable_probe_membrane_voltage('"synapse_site"')]
+            return [arbor.cable_probe_point_state(target=0, mechanism='Ampa', state='g_active')]
+            #return [arbor.cable_probe_membrane_voltage('"synapse_site"')]
         elif self.type == 'gt':
             #return [arbor.cable_probe_point_state(target=0, mechanism='Ampa', state='Trelease')]
-            return [arbor.cable_probe_membrane_voltage('"synapse_site"')]
+            return [arbor.cable_probe_point_state(target=0, mechanism='Ampa', state='save')]
+            #return [arbor.cable_probe_membrane_voltage('"synapse_site"')]
         else: 
             return []
 
@@ -78,7 +80,7 @@ def run_sim(rec):
     gid = 0
     sim.record(arbor.spike_recording.all)
     handles = sim.sample((gid, 0), arbor.regular_schedule(0.025))
-    sim.run(5)
+    sim.run(100)
     samples, meta = sim.samples(handles)[0]
 
     return samples

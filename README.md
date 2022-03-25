@@ -28,5 +28,4 @@ This repository contains 2 versions of the same original mechanism [Ampa](https:
    The first equation represents the diffusion of glutamate between the emission area and the active area.
    The second equation represents the diffusion of glutamate between the active area and the surrounds.
 
-   Values for `alpha`, `beta`, and `gamma`need to be determined using parameter optimization.
-
+   Values for `alpha`, `beta`, and `gamma`need to be determined using parameter optimization. `ampa_cell.py` and `curve_fit.py` are used to determine these parameters. 
