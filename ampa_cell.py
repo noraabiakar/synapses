@@ -58,7 +58,7 @@ class single_cell_recipe (arbor.recipe):
         return [arbor.event_generator('syn', 0, sched)]
 
     def probes(self, gid):
-        return [arbor.cable_probe_point_state(target=0, mechanism='Ampa', state='g_active')]
+        return [arbor.cable_probe_point_state(target=0, mechanism='Ampa', state='Trelease')]
 
     def global_properties(self, kind):
         return self.props
@@ -82,15 +82,15 @@ def run_ground_truth():
 def run_approximation(a, b, c):
     return run_sim(single_cell_recipe('approx', a, b, c))
 
-data_ap = run_approximation(0, 0.0, 0.00)
+#data_ap = run_approximation(1.5, 0.2, 0.0001)
 #data_gt = run_ground_truth()
 
-import matplotlib.pyplot as plt
-plt.plot(data_ap[:,0], data_ap[:, 1]) 
-plt.xlabel('t(ms)')
-plt.ylabel('Trelease(M)')
-plt.title('approx plot')
-plt.savefig('approx.png')
+#import matplotlib.pyplot as plt
+#plt.plot(data_ap[:,0], data_ap[:, 1]) 
+#plt.xlabel('t(ms)')
+#plt.ylabel('Trelease(M)')
+#plt.title('approx plot')
+#plt.savefig('approx.png')
 
 #plt.clf()
 #plt.plot(data_gt[:,0], data_gt[:, 1]) 

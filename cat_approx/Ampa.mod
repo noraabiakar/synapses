@@ -175,7 +175,7 @@ NET_RECEIVE(weight) {
         y = y + x * u
 
         T = Tmax * y
-        g_active = g_active + Mres
+        g_emission = g_emission + Mres
         tsyn = t
     }
     delay = Cdur
