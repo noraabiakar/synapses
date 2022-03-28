@@ -54,7 +54,7 @@ class single_cell_recipe (arbor.recipe):
         return []
 
     def event_generators(self, gid):
-        sched = arbor.explicit_schedule([1]) # one event at 1 ms
+        sched = arbor.explicit_schedule([1, 10, 11, 30, 31, 32, 33])
         return [arbor.event_generator('syn', 0, sched)]
 
     def probes(self, gid):
@@ -80,7 +80,7 @@ def run_sim(rec):
     gid = 0
     sim.record(arbor.spike_recording.all)
     handles = sim.sample((gid, 0), arbor.regular_schedule(0.025))
-    sim.run(100)
+    sim.run(50)
     samples, meta = sim.samples(handles)[0]
 
     return samples
@@ -98,7 +98,8 @@ import matplotlib.pyplot as plt
 #data_ap = run_approximation(3.91748572e-01, -2.19242639e-01,  9.90645981e-06)
 #data_ap = run_approximation(4.24991430e-01, -2.09281013e-01,  8.30864218e-06)
 #data_ap = run_approximation( 4.24842499e-01, -2.09230451e-01,  8.31083135e-06)
-data_ap = run_approximation(4.81017695e-01, -3.56942029e-01, 7.81801390e-06)
+#data_ap = run_approximation(4.81017695e-01, -3.56942029e-01, 7.81801390e-06)
+data_ap = run_approximation(3.92417130e-01, -1.66705011e-01, 1.07668617e-05)
 data_gt = run_ground_truth()
 
 plt.plot(data_ap[:,0], data_ap[:, 1], 'b') 
