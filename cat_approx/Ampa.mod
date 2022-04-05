@@ -54,11 +54,11 @@ PARAMETER {
 
     : Diffusion
     M             = 21500
-    h             = 20    (um)    : Synaptic cleft height
-    r             = 1.033 (um)    <0, 3>       : needs to be obtained by BluPyOpt
-    a_ratio       = 0     (um)    <-1e9, 1e9>  : needs to be obtained by BluPyOpt
-    b_ratio       = 0     (um)    <-1e9, 1e9>  : needs to be obtained by BluPyOpt
-    c_ratio       = 0     (um)    <-1e9, 1e9>  : needs to be obtained by BluPyOpt
+    h             = 20              (um)    : Synaptic cleft height
+    r             = 1.033           (um)    <0, 3>       : needs to be obtained by BluPyOpt
+    a_ratio       = 3.92417130e-01  (um)    <-1e9, 1e9>  : needs to be obtained by BluPyOpt
+    b_ratio       = -1.66705011e-01 (um)    <-1e9, 1e9>  : needs to be obtained by BluPyOpt
+    c_ratio       = 1.07668617e-05  (um)    <-1e9, 1e9>  : needs to be obtained by BluPyOpt
 }
 
 
